@@ -2,28 +2,18 @@ import datetime
 import os
 import time
 import sys
+import common.utils
+import sqlite3
 
-experience = dict()
-experience["2017-01-12 19:20:40.674936"] = "i was born"
-
-
-event_source_file = "new_event.txt"
+conn = sqlite3.connect('events.db')
+c = conn.cursor()
 
 
 def add_experience(event):
-    this_file = open(__file__, "r")
-
-    lines = this_file.readlines()
-    for k, line in enumerate(lines):
-        if line.startswith("experience"):
-            lines.insert(k+1, 'experience["{0}"] = "{1}"\n'.format(datetime.datetime.now(), event))
-            break
-
-    this_file.close()
-
-    this_file = open(__file__, "w")
-    this_file.writelines(lines)
-    this_file.close()
+    purchases = [(str(datetime.datetime.now()), str(event))
+                ]
+    c.executemany('INSERT INTO experiences (date, event) VALUES (?,?)', purchases)
+    conn.commit()
 
 
 def learn():
@@ -32,7 +22,7 @@ def learn():
 
 def watch_world():
     try:
-        event_file = open(event_source_file, "r")
+        event_file = open(common.utils.event_source_file, "r")
     except:
         pass
     else:
@@ -42,10 +32,10 @@ def watch_world():
         if event:
             print("Something happened in the world: " + event)
             add_experience(event)
-            os.remove(event_source_file)
+            os.remove(common.utils.event_source_file)
 
 watch_world()
-
+conn.close()
 time.sleep(0.5)
 print("Re-running self...")
 python = sys.executable
