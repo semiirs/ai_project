@@ -8,8 +8,8 @@ import common.code_manipulation
 
 import sqlite3
 
-# conn = sqlite3.connect('prod_events.db')
-conn = sqlite3.connect('events.db')
+# conn = sqlite3.connect('db\prod_events.db')
+conn = sqlite3.connect('db\events.db')
 c = conn.cursor()
 
 effect_fade_seconds = 3

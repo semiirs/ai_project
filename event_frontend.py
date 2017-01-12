@@ -1,4 +1,4 @@
-import event_generator
+from common import event_generator
 
 while True:
     print("What do you want to do to Your child?")
