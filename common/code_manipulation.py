@@ -4,6 +4,7 @@ _modified_file_lines = []
 
 _method_for_automatic_code = "apply_knowledge"
 
+
 def was_any_code_modified():
     global _original_file_lines
     global _modified_file_lines

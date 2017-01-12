@@ -1,4 +1,5 @@
 import datetime
+import common.experience
 import os
 import time
 import sys
@@ -17,6 +18,22 @@ event_frequency_threshold = 2
 event_intensity_time_threshold = 3
 
 
+def check_event_frequency(event, period_since_now):
+    events = []
+    number_of_events_in_period = 0
+    now = datetime.datetime.now()
+
+    for row in c.execute('SELECT date, event FROM experiences WHERE event LIKE \'' + event + '\' ORDER BY date DESC'):
+        exp = common.experience.Experience.reconstruct_from_db_data_event(row[0], row[1])
+        events.append(exp)
+
+    for event in events:
+        if now - event._date < period_since_now:
+            number_of_events_in_period += 1
+
+    return number_of_events_in_period
+
+
 def add_experience(event):
     event = [(str(datetime.datetime.now()), str(event))]
     c.executemany('INSERT INTO experiences (date, event) VALUES (?,?)', event)
@@ -24,9 +41,14 @@ def add_experience(event):
 
 
 def learn():
+    pass
 
-    for row in c.execute('SELECT * FROM experiences ORDER BY date DESC'):
-        common.code_manipulation.add_code_line_at_start(str(row[0]))
+
+def handle_immediate_experience(event):
+    interval = datetime.timedelta(minutes=2)
+    times = check_event_frequency(event, interval)
+
+    print("This event has happened {0} times in the last 2 minutes.".format(times))
 
 
 def apply_knowledge():
@@ -44,6 +66,7 @@ def watch_world():
 
         if event:
             print("Something happened in the world: " + event)
+            handle_immediate_experience(event)
             add_experience(event)
             os.remove(common.utils.event_source_file)
 
