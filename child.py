@@ -49,6 +49,8 @@ def handle_immediate_experience(event):
     times = check_event_frequency(event, interval)
 
     print("This event has happened {0} times in the last 2 minutes.".format(times))
+    if times > event_frequency_threshold:
+        pass
 
 
 def apply_knowledge():
